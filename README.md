@@ -1,69 +1,42 @@
-# butschster/tui — Terminal UI Toolkit
+# Terminal UI Toolkit
 
 Lip Gloss-inspired style system, layout primitives, and ANSI rendering for Wippy.
 
 Pure Lua — no Go-side runtime changes required. Works today on any `terminal.host` process using the `io` module.
 
-## Module Structure
-
-```
-terminal-sdk/
-├── wippy.yaml              # Module manifest
-├── wippy.lock
-└── src/
-    ├── _index.yaml         # Entry definitions (namespace: wippy.tui)
-    ├── ansi.lua            # ANSI escape primitives, string measurement
-    ├── color.lua           # Color system (named, ANSI 256, hex, adaptive)
-    ├── border.lua          # Border character sets
-    ├── style.lua           # Declarative style builder (main API)
-    ├── layout.lua          # Layout joins, placement, measurement, tables
-    ├── app.lua             # Elm Architecture app runtime
-    ├── components/
-    │   ├── spinner.lua     # Animated activity indicator (14 presets)
-    │   ├── progress.lua    # Progress bar (solid/gradient)
-    │   ├── textinput.lua   # Single-line text input with cursor
-    │   ├── viewport.lua    # Scrollable content pane
-    │   └── help.lua        # Key binding display
-    └── cli/
-        ├── args.lua        # Argument & option parser with help generation
-        ├── output.lua      # Table, panel, definitions, tree, rule
-        ├── prompt.lua      # Interactive prompts (text, confirm, select)
-        └── cli_progress.lua # Line-based progress bar, spinner, multi-bar
-```
-
 ## Libraries
 
 **TUI Framework** — style, layout, and interactive app runtime:
 
-| Entry                  | Import Name     | Purpose                                             |
-|------------------------|-----------------|-----------------------------------------------------|
-| `wippy.tui:ansi`       | `ansi`          | Low-level ANSI sequences, strip/measure/pad strings |
-| `wippy.tui:color`      | `color`         | Color constructors, profile-aware rendering         |
-| `wippy.tui:border`     | `border_defs`   | Named border character sets                         |
-| `wippy.tui:style`      | `style`         | Immutable style builder with box model + rendering  |
-| `wippy.tui:layout`     | `layout`        | Horizontal/vertical joins, placement, tables        |
-| `wippy.tui:app`        | `app`           | Elm Architecture app runtime                        |
-| `wippy.tui:spinner`    | `spinner`       | Animated spinner component (14 presets)             |
-| `wippy.tui:progress`   | `progress`      | Progress bar with solid/gradient fill               |
-| `wippy.tui:textinput`  | `textinput`     | Single-line text input with cursor                  |
-| `wippy.tui:viewport`   | `viewport`      | Scrollable content pane with scrollbar              |
-| `wippy.tui:help`       | `help`          | Key binding display (short/full modes)              |
+| Entry                 | Import Name   | Purpose                                             |
+|-----------------------|---------------|-----------------------------------------------------|
+| `wippy.tui:ansi`      | `ansi`        | Low-level ANSI sequences, strip/measure/pad strings |
+| `wippy.tui:color`     | `color`       | Color constructors, profile-aware rendering         |
+| `wippy.tui:border`    | `border_defs` | Named border character sets                         |
+| `wippy.tui:style`     | `style`       | Immutable style builder with box model + rendering  |
+| `wippy.tui:layout`    | `layout`      | Horizontal/vertical joins, placement, tables        |
+| `wippy.tui:app`       | `app`         | Elm Architecture app runtime                        |
+| `wippy.tui:spinner`   | `spinner`     | Animated spinner component (14 presets)             |
+| `wippy.tui:progress`  | `progress`    | Progress bar with solid/gradient fill               |
+| `wippy.tui:textinput` | `textinput`   | Single-line text input with cursor                  |
+| `wippy.tui:viewport`  | `viewport`    | Scrollable content pane with scrollbar              |
+| `wippy.tui:help`      | `help`        | Key binding display (short/full modes)              |
 
 **CLI SDK** — argument parsing, output formatting, prompts, and progress:
 
-| Entry                      | Import Name      | Purpose                                         |
-|----------------------------|------------------|-------------------------------------------------|
-| `wippy.tui:args`           | `args`           | Argument/option parser with auto `--help`       |
-| `wippy.tui:output`         | `output`         | Table, panel, definitions, tree, rule renderers |
-| `wippy.tui:prompt`         | `prompt`         | Interactive prompts (text, password, select)     |
-| `wippy.tui:cli_progress`   | `cli_progress`   | Line-based progress bar, spinner, multi-bar     |
+| Entry                    | Import Name    | Purpose                                         |
+|--------------------------|----------------|-------------------------------------------------|
+| `wippy.tui:args`         | `args`         | Argument/option parser with auto `--help`       |
+| `wippy.tui:output`       | `output`       | Table, panel, definitions, tree, rule renderers |
+| `wippy.tui:prompt`       | `prompt`       | Interactive prompts (text, password, select)    |
+| `wippy.tui:cli_progress` | `cli_progress` | Line-based progress bar, spinner, multi-bar     |
 
 ## Quick Example
 
 ```yaml
 # Consumer _index.yaml
 entries:
-  - name: __dependency.tui
+  - name: dep.tui
     kind: ns.dependency
     component: butschster/tui
     version: "*"
@@ -471,6 +444,7 @@ args.has_option(parsed, "replicas")          -- true if explicitly set
 ```
 
 **Features:**
+
 - Positional arguments with `required`, `choices`, `default`, type coercion
 - Long options (`--name`, `--name=value`), short options (`-f`, `-fv` combined)
 - Boolean negation (`--no-force`), `--` separator for rest args
@@ -614,23 +588,3 @@ cli_progress.finish_multi(multi, io)
 - **Adaptive colors** — `color.adaptive(light, dark)` picks based on `color._dark_background`.
 - **Composable components** — sub-model pattern (new/update/view) embeds into any `tui.app()`.
 - **CLI SDK decoupled from TUI** — args, output, prompts work with plain `io` module. No app runtime needed.
-
-## Coverage
-
-From the [master checklist](../docs/ideas/terminal-sdk/master-checklist.md):
-
-**Stage 2: Style & Layout** ✅
-- [x] 2.1–2.6: Style builder, colors, box model, borders, layout, shorthands
-- [ ] 2.7: Runtime verification pending
-
-**Stage 3: TUI App Runtime** ✅
-- [x] 3.1–3.7: Elm Architecture runtime, message dispatch, frame diffing, cmd/batch/tick, crash recovery
-- [ ] 3.8: Runtime verification pending
-
-**Stage 4: Core Components** ✅
-- [x] 4.1–4.5: Spinner, progress, textinput, viewport, help
-- [ ] 4.6: Runtime verification pending
-
-**Stage 5: CLI SDK** ✅
-- [x] 5.1–5.6: Args parser, help generation, output helpers, prompts, CLI progress
-- [ ] 5.7: Runtime verification pending
