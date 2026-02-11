@@ -1,0 +1,11 @@
+organization: butschster
+module: tui
+description: Terminal UI toolkit — Lip Gloss-inspired style system, layout primitives, and ANSI rendering
+license: MIT
+keywords:
+  - tui
+  - terminal
+  - style
+  - layout
+  - ansi
+  - cli

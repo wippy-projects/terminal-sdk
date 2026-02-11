@@ -1,0 +1,241 @@
+version: "1.0"
+namespace: wippy.tui
+
+entries:
+  # ── Module Definition ─────────────────────────────────────
+  - name: definition
+    kind: ns.definition
+    meta:
+      title: TUI Toolkit
+      description: >
+        Terminal UI toolkit — Lip Gloss-inspired style system,
+        layout primitives, and ANSI rendering for Wippy
+
+  # ── Low-level ANSI primitives ─────────────────────────────
+  - name: ansi
+    kind: library.lua
+    meta:
+      type: library
+      description: ANSI escape code primitives — SGR sequences, cursor control, screen ops, string measurement
+    source: file://ansi.lua
+    modules: [ ]
+
+  # ── Color system ──────────────────────────────────────────
+  - name: color
+    kind: library.lua
+    meta:
+      type: library
+      description: Color system — named colors, ANSI 256, hex truecolor, adaptive light/dark profiles
+    source: file://color.lua
+    modules: [ ]
+    imports:
+      ansi: wippy.tui:ansi
+
+  # ── Border definitions ────────────────────────────────────
+  - name: border
+    kind: library.lua
+    meta:
+      type: library
+      description: Border character sets — normal, rounded, thick, double, block, half-block
+    source: file://border.lua
+    modules: [ ]
+
+  # ── Style builder ─────────────────────────────────────────
+  - name: style
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        Lip Gloss-inspired declarative style builder — immutable builder pattern
+        with box model, colors, borders, padding, margin, alignment
+    source: file://style.lua
+    modules: [ ]
+    imports:
+      ansi: wippy.tui:ansi
+      color: wippy.tui:color
+      border_defs: wippy.tui:border
+
+  # ── Layout system ─────────────────────────────────────────
+  - name: layout
+    kind: library.lua
+    meta:
+      type: library
+      description: Layout primitives — horizontal/vertical joins, placement, measurement, table rendering
+    source: file://layout.lua
+    modules: [ ]
+    imports:
+      ansi: wippy.tui:ansi
+
+  # ── App runtime ───────────────────────────────────────────
+  - name: app
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        Elm Architecture (Model-Update-View) app runtime — event loop,
+        message dispatch, frame diffing, async commands, tick timers
+    source: file://app.lua
+    modules:
+      - io
+      - time
+    imports:
+      ansi: wippy.tui:ansi
+
+  # ── Components ────────────────────────────────────────────
+
+  - name: spinner
+    kind: library.lua
+    meta:
+      type: library
+      description: Animated spinner component — 14+ presets, auto-tick, customizable style
+    source: file://components/spinner.lua
+    modules: [ ]
+
+  - name: progress
+    kind: library.lua
+    meta:
+      type: library
+      description: Progress bar component — solid/gradient fill, percentage display
+    source: file://components/progress.lua
+    modules: [ ]
+
+  - name: textinput
+    kind: library.lua
+    meta:
+      type: library
+      description: Single-line text input — cursor, placeholder, char limit, password mode
+    source: file://components/textinput.lua
+    modules: [ ]
+
+  - name: viewport
+    kind: library.lua
+    meta:
+      type: library
+      description: Scrollable content pane — arrow/page keys, word wrap, scrollbar
+    source: file://components/viewport.lua
+    modules: [ ]
+    imports:
+      ansi: wippy.tui:ansi
+
+  - name: help
+    kind: library.lua
+    meta:
+      type: library
+      description: Auto-generated key binding display — short/full mode, grouped bindings
+    source: file://components/help.lua
+    modules: [ ]
+    imports:
+      ansi: wippy.tui:ansi
+
+  - name: list
+    kind: library.lua
+    meta:
+      type: library
+      description: Item browser with fuzzy filtering, pagination, cursor navigation, and custom delegates
+    source: file://components/list.lua
+    modules: [ ]
+
+  - name: table_view
+    kind: library.lua
+    meta:
+      type: library
+      description: Navigable data table — row selection, column definitions, header, scrolling
+    source: file://components/table_view.lua
+    modules: [ ]
+
+  - name: textarea
+    kind: library.lua
+    meta:
+      type: library
+      description: Multi-line text editor — line numbers, scrolling, word wrap, undo
+    source: file://components/textarea.lua
+    modules: [ ]
+
+  - name: timer
+    kind: library.lua
+    meta:
+      type: library
+      description: Countdown timer and stopwatch — start/stop/toggle, laps, configurable display
+    source: file://components/timer.lua
+    modules: [ ]
+
+  - name: multi_progress
+    kind: library.lua
+    meta:
+      type: library
+      description: Cross-process progress tracker — aggregates worker progress via message passing
+    source: file://components/multi_progress.lua
+    modules: [ ]
+
+  - name: tabs
+    kind: library.lua
+    meta:
+      type: library
+      description: Tabbed navigation — keyboard switching, number keys, wrap-around, underline variant
+    source: file://components/tabs.lua
+    modules: [ ]
+
+  - name: paginator
+    kind: library.lua
+    meta:
+      type: library
+      description: Page indicator — dot-style, numeric, and arabic pagination with keyboard nav
+    source: file://components/paginator.lua
+    modules: [ ]
+
+  # ── Theme System ──────────────────────────────────────────
+
+  - name: theme
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        Color theme system — 8 built-in themes (default, dracula, catppuccin, nord,
+        tokyo_night, gruvbox, solarized_dark, light), custom theme registration, merge
+    source: file://theme.lua
+    modules: [ ]
+
+  # ── CLI SDK ───────────────────────────────────────────────
+
+  - name: args
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        CLI argument & option parser — positional args, typed options,
+        choices validation, auto-generated --help text
+    source: file://cli/args.lua
+    modules: [ ]
+
+  - name: output
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        CLI output helpers — table, panel, definitions list, tree, rule renderers
+    source: file://cli/output.lua
+    modules: [ ]
+    imports:
+      ansi: wippy.tui:ansi
+      color: wippy.tui:color
+      border_defs: wippy.tui:border
+
+  - name: prompt
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        CLI interactive prompts — text, password, confirm, select, multiselect
+        with validation, defaults, and non-interactive fallback
+    source: file://cli/prompt.lua
+    modules: [ ]
+
+  - name: cli_progress
+    kind: library.lua
+    meta:
+      type: library
+      description: >
+        CLI progress indicators — line-based progress bar, spinner,
+        and multi-bar for non-TUI terminal output
+    source: file://cli/cli_progress.lua
+    modules: [ ]

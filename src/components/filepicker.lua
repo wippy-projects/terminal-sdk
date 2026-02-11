@@ -1,0 +1,2 @@
+--- Filepicker placeholder — skipped, pending filesystem API finalization.
+--- See Stage 6 checklist item 6.4.
