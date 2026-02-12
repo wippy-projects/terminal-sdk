@@ -28,6 +28,14 @@ local function get_io(opts)
     return (opts and opts.io) or _io
 end
 
+--- Extract value from a select/multiselect item.
+local function get_item_value(item)
+    if type(item) == "table" then
+        return item.value ~= nil and item.value or item
+    end
+    return item
+end
+
 ---------------------------------------------------------------------------
 -- Text input
 ---------------------------------------------------------------------------
@@ -61,28 +69,30 @@ function prompt.text(message: string, opts): string?
 
         input = input:match("^%s*(.-)%s*$") or ""
 
+        local retry = false
+
         -- Empty → use default
         if #input == 0 then
             if opts.default then return opts.default end
             if opts.required then
                 io_mod.print("  Value is required. Please try again.")
-                goto continue
+                retry = true
             end
-            return ""
+            if not retry then return "" end
         end
 
         -- Validate
-        if opts.validate then
+        if not retry and opts.validate then
             local ok, err = opts.validate(input)
             if not ok then
                 io_mod.print("  " .. (err or "Invalid input. Please try again."))
-                goto continue
+                retry = true
             end
         end
 
-        return input
-
-        ::continue::
+        if not retry then
+            return input
+        end
     end
 end
 
@@ -113,25 +123,27 @@ function prompt.password(message: string, opts): string?
         if input == nil then return nil end
         input = input:match("^%s*(.-)%s*$") or ""
 
+        local retry = false
+
         if #input == 0 and required then
             io_mod.print("  Password is required. Please try again.")
-            goto continue
+            retry = true
         end
 
         -- Confirmation
-        if opts.confirm and #input > 0 then
+        if not retry and opts.confirm and #input > 0 then
             io_mod.write("Confirm " .. message:sub(1, 1):lower() .. message:sub(2) .. ": ")
             io_mod.flush()
             local confirm = io_mod.readline()
             if confirm ~= input then
                 io_mod.print("  Passwords do not match. Please try again.")
-                goto continue
+                retry = true
             end
         end
 
-        return input
-
-        ::continue::
+        if not retry then
+            return input
+        end
     end
 end
 
@@ -348,44 +360,37 @@ function prompt.multiselect(message: string, items, opts)
             end
         end
 
+        local retry = false
+
         if not valid then
             io_mod.print("  Invalid selection. Enter numbers between 1 and " .. #items .. ".")
-            goto continue
+            retry = true
         end
 
         -- Collect results in order
         local result = {}
-        for i = 1, #items do
-            if selected[i] then
-                table.insert(result, get_item_value(items[i]))
+        if not retry then
+            for i = 1, #items do
+                if selected[i] then
+                    table.insert(result, get_item_value(items[i]))
+                end
+            end
+
+            -- Min/max validation
+            if opts.min and #result < opts.min then
+                io_mod.print("  Please select at least " .. opts.min .. " item(s).")
+                retry = true
+            end
+            if not retry and opts.max and #result > opts.max then
+                io_mod.print("  Please select at most " .. opts.max .. " item(s).")
+                retry = true
             end
         end
 
-        -- Min/max validation
-        if opts.min and #result < opts.min then
-            io_mod.print("  Please select at least " .. opts.min .. " item(s).")
-            goto continue
+        if not retry then
+            return result
         end
-        if opts.max and #result > opts.max then
-            io_mod.print("  Please select at most " .. opts.max .. " item(s).")
-            goto continue
-        end
-
-        return result
-
-        ::continue::
     end
-end
-
----------------------------------------------------------------------------
--- Internal helper
----------------------------------------------------------------------------
-
-function get_item_value(item)
-    if type(item) == "table" then
-        return item.value ~= nil and item.value or item
-    end
-    return item
 end
 
 return prompt

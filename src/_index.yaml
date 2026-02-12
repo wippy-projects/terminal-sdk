@@ -1,5 +1,5 @@
 version: "1.0"
-namespace: wippy.tui
+namespace: tui
 
 entries:
   # ── Module Definition ─────────────────────────────────────
@@ -29,7 +29,7 @@ entries:
     source: file://color.lua
     modules: [ ]
     imports:
-      ansi: wippy.tui:ansi
+      ansi: tui:ansi
 
   # ── Border definitions ────────────────────────────────────
   - name: border
@@ -51,9 +51,9 @@ entries:
     source: file://style.lua
     modules: [ ]
     imports:
-      ansi: wippy.tui:ansi
-      color: wippy.tui:color
-      border_defs: wippy.tui:border
+      ansi: tui:ansi
+      color: tui:color
+      border_defs: tui:border
 
   # ── Layout system ─────────────────────────────────────────
   - name: layout
@@ -64,7 +64,7 @@ entries:
     source: file://layout.lua
     modules: [ ]
     imports:
-      ansi: wippy.tui:ansi
+      ansi: tui:ansi
 
   # ── App runtime ───────────────────────────────────────────
   - name: app
@@ -79,7 +79,7 @@ entries:
       - io
       - time
     imports:
-      ansi: wippy.tui:ansi
+      ansi: tui:ansi
 
   # ── Components ────────────────────────────────────────────
 
@@ -115,7 +115,7 @@ entries:
     source: file://components/viewport.lua
     modules: [ ]
     imports:
-      ansi: wippy.tui:ansi
+      ansi: tui:ansi
 
   - name: help
     kind: library.lua
@@ -125,7 +125,7 @@ entries:
     source: file://components/help.lua
     modules: [ ]
     imports:
-      ansi: wippy.tui:ansi
+      ansi: tui:ansi
 
   - name: list
     kind: library.lua
@@ -216,9 +216,9 @@ entries:
     source: file://cli/output.lua
     modules: [ ]
     imports:
-      ansi: wippy.tui:ansi
-      color: wippy.tui:color
-      border_defs: wippy.tui:border
+      ansi: tui:ansi
+      color: tui:color
+      border_defs: tui:border
 
   - name: prompt
     kind: library.lua
